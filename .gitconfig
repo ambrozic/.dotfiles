@@ -1,0 +1,39 @@
+[user]
+	name = ambrozic
+	email = ambrozic@gmail.com
+[core]
+	attributesfile = ~/.config/git/attributes
+	excludesfile = ~/.config/git/ignore
+	autocrlf = false
+	bare = false
+	editor = nano
+	filemode = true
+	ignorecase = true
+	logallrefupdates = true
+	pager = diff-so-fancy
+	precomposeunicode = true
+	repositoryformatversion = 0
+[color]
+	ui = true
+[color "branch"]
+	current = yellow bold
+	local = green bold
+	remote = cyan bold
+[color "diff"]
+	meta = yellow bold
+	commit = green bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "status"]
+	added = green bold
+	changed = yellow bold
+	untracked = red bold
+[merge]
+    tool = opendiff

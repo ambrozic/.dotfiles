@@ -1,0 +1,108 @@
+############################################
+# FINDER
+############################################
+# show hidden files by default
+defaults write com.apple.finder AppleShowAllFiles -bool true
+
+# display full path in finder title
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+
+# always open everything in list view.
+defaults write com.apple.Finder FXPreferredViewStyle -string "Nlsv"
+
+# show all filename extensions
+#defaults write -g AppleShowAllExtensions -bool true
+
+# expand save panel by default
+defaults write -g NSNavPanelExpandedStateForSaveMode -bool true
+
+# show status bar
+defaults write com.apple.finder ShowStatusBar -bool true
+
+# show path bar
+defaults write com.apple.finder ShowPathbar -bool true
+
+
+############################################
+# DOCK
+############################################
+# automatically hide and show
+defaults write com.apple.dock autohide -bool true
+
+# Set the icon size of Dock items to 36 pixels
+defaults write com.apple.dock tilesize -int 36
+
+# removes something glassy
+defaults write com.apple.dock no-glass -bool true
+
+# wipe all (default) app icons from the dock
+defaults write com.apple.dock persistent-apps -array
+
+
+############################################
+# MENU BAR
+############################################
+# enable transparency
+defaults write -g AppleEnableMenuBarTransparency -bool true
+
+# disable opening and closing window animations
+defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
+
+
+############################################
+# MOUSE AND TRACKPAD
+############################################
+# mouse tracking speed
+defaults write -g com.apple.mouse.scaling -float 1.5
+
+# scrollwheel scrolling speed
+defaults write -g com.apple.scrollwheel.scaling -float 0.5
+
+# trackpad tracking speed
+defaults write -g com.apple.trackpad.scaling -float 0.7
+
+# three finger drag
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+
+# tap to click
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+
+
+############################################
+# KEYBOARD
+############################################
+# disable press-and-hold for keys in favor of key repeat.
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+# set a really fast key repeat.
+defaults write -g InitialKeyRepeat -int 15
+defaults write -g KeyRepeat -int 2
+
+# application shortcuts
+defaults write -globalDomain NSUserKeyEquivalents {}
+defaults write -globalDomain NSUserKeyEquivalents -dict-add "Select Next Tab" "~^\\U2192";
+defaults write -globalDomain NSUserKeyEquivalents -dict-add "Select Previous Tab" "~^\\U2190";
+defaults write -globalDomain NSUserKeyEquivalents -dict-add "Select next tab" "~^\\U2192";
+defaults write -globalDomain NSUserKeyEquivalents -dict-add "Select previous tab" "~^\\U2190";
+defaults write -globalDomain NSUserKeyEquivalents -dict-add "Show Next Tab" "~^\\U2192";
+defaults write -globalDomain NSUserKeyEquivalents -dict-add "Show Previous Tab" "~^\\U2190";
+
+
+############################################
+# RANDOM
+############################################
+# avoid creating .DS_Store files on network volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
+
+############################################
+# APPLY SETTINGS CHANGES
+############################################
+/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+
+############################################
+# RESTART
+############################################
+killall -kill Dock
+killall -kill Finder

@@ -1,0 +1,113 @@
+# https://github.com/koekeishiya/skhd/
+#
+# skhd --install-service | --uninstall-service | --start-service | --restart-service | --stop-service
+#
+# https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_code_values#code_values_on_mac
+#
+
+# show keyboard shortcuts
+alt + cmd - k : qlmanage -p "~/.dotfiles/shortcuts.txt" 2>/dev/null
+
+# resize window to full size (alt + cmd - comma)
+alt + cmd - 0x2B : yabai -m window --grid 20:20:0:0:20:20
+
+# resize window to center medium size (alt + cmd - dot)
+alt + cmd - 0x2F : yabai -m window --grid 20:20:2:2:16:16
+
+# resize window to center small size (alt + cmd - slash)
+alt + cmd - 0x2C : yabai -m window --grid 20:20:3:3:14:14
+
+# resize window to center mini size (ctrl + alt + cmd - dot)
+ctrl + alt + cmd - 0x2F : yabai -m window --grid 20:20:4:4:12:12
+
+# resize window to center nano size (ctrl + alt + cmd - slash)
+ctrl + alt + cmd - 0x2C : yabai -m window --grid 20:20:5:5:10:10
+
+# resize window to center narrow full height
+alt + cmd - m : yabai -m window --grid 20:20:3:0:14:20
+
+# decrease window size (alt + cmd - minus)
+       alt + cmd - 0x1B : yabai -m window --resize  top:0:10 && yabai -m window --resize bottom:0:-10
+ctrl + alt + cmd - 0x1B : yabai -m window --resize left:10:0 && yabai -m window --resize  right:-10:0
+
+# increase window size (alt + cmd - equals)
+       alt + cmd - 0x18 : yabai -m window --resize  top:0:-10 && yabai -m window --resize bottom:0:10
+ctrl + alt + cmd - 0x18 : yabai -m window --resize left:-10:0 && yabai -m window --resize  right:10:0
+
+# resize window to corners
+alt + cmd - f5 : yabai -m window --grid 20:20:0:0:10:10
+alt + cmd - f6 : yabai -m window --grid 20:20:10:0:10:10
+alt + cmd - f7 : yabai -m window --grid 20:20:0:10:10:10
+alt + cmd - f8 : yabai -m window --grid 20:20:10:10:10:10
+
+# resize window to halves
+alt + cmd - f9  : yabai -m window --grid 20:20:0:0:20:10
+alt + cmd - f10 : yabai -m window --grid 20:20:0:10:20:10
+alt + cmd - f11 : yabai -m window --grid 20:20:0:0:10:20
+alt + cmd - f12 : yabai -m window --grid 20:20:10:0:10:20
+
+# resize window to thirds vertically
+alt + cmd - insert : yabai -m window --grid 20:20:0:0:6:20
+alt + cmd - home   : yabai -m window --grid 20:20:6:0:8:20
+alt + cmd - pageup : yabai -m window --grid 20:20:14:0:6:20
+
+# resize window to thirds horizontally
+alt + cmd - delete   : yabai -m window --grid 18:18:0:0:20:6
+alt + cmd - end      : yabai -m window --grid 18:18:0:6:20:6
+alt + cmd - pagedown : yabai -m window --grid 18:18:0:12:20:6
+
+# toggle windows tiling on main space
+       alt + cmd - 0 : yabai -m rule --add space=main app="^(DataGrip|IntelliJ IDEA|iTerm2|PyCharm|Sublime Text)$" && yabai -m space main --layout bsp && yabai -m query --windows | jq 'map(select(."split-type" != "none")) | reverse | .[].id' | xargs -L1 -I'{}' yabai -m window {} --focus
+ctrl + alt + cmd - 0 : yabai -m rule --add space=main app="^(DataGrip|IntelliJ IDEA|iTerm2|PyCharm|Sublime Text)$" && yabai -m space main --layout float
+
+# toggle active window in and out of tiling layout (alt + cmd - backspace)
+alt + cmd - 0x33 : yabai -m window --toggle float && yabai -m window --grid 20:20:2:2:16:16
+
+# toggle window split between vertical or horizontal
+alt + cmd - 9 : yabai -m window --toggle split
+
+# balance windows layout state
+alt + cmd - 8 : yabai -m space main --balance
+
+# manage windows layout state
+alt + cmd - 7 : yabai -m space main --rotate 270
+alt + cmd - 6 : yabai -m space main --mirror x-axis
+alt + cmd - 5 : yabai -m space main --mirror y-axis
+
+# swap window
+alt + cmd - 4 : yabai -m window --swap east
+alt + cmd - 3 : yabai -m window --swap south
+alt + cmd - 2 : yabai -m window --swap north
+alt + cmd - 1 : yabai -m window --swap west
+
+# resize and center all windows (alt + cmd - semicolon)
+alt + cmd - 0x29 : yabai -m rule --add space=main app="^(DataGrip|IntelliJ IDEA|iTerm2|PyCharm|Sublime Text)$" && yabai -m space main --layout float && yabai -m query --windows --space main | jq '.[].id' | xargs -L1 -I'{}' yabai -m window {} --grid 20:20:2:2:16:16
+
+# group windows (alt + cmd - single quote)
+alt + cmd - 0x27 : yabai -m rule --add space=main app="^(DataGrip|IntelliJ IDEA|iTerm2|PyCharm|Sublime Text)$" && yabai -m space main --layout float && yabai -m query --windows --space main | jq '.[].id' | nl -bt -nln | xargs -L1 -I'{}' echo {} | cut -d' ' -f1,2 | xargs -n 2 sh -c 'yabai -m window $1 --grid 20:20:1:1:15:15 && yabai -m window $1 --move rel:$(($0*20)):$(($0*20))'
+
+# scatter windows randomly (alt + cmd - backslash)
+alt + cmd - 0x2A : yabai -m rule --add space=main app="^(DataGrip|IntelliJ IDEA|iTerm2|PyCharm|Sublime Text)$" && yabai -m space main --layout float && yabai -m query --windows --space main | jq '.[].id' | xargs -L1 -I'{}' sh -c 'yabai -m window {} --grid 20:20:3:3:14:14 ; yabai -m window {} --move rel:$(jot -r 1 -250 250):$(jot -r 1 -150 150)'
+
+# move window between spaces (alt + cmd - [ or ])
+alt + cmd - 0x21 : yabai -m window --space prev
+alt + cmd - 0x1E : yabai -m window --space next
+
+# move window between displays (ctrl + alt + cmd - [ or ])
+ctrl + alt + cmd - 0x21 : yabai -m window --display next
+ctrl + alt + cmd - 0x1E : yabai -m window --display prev
+
+# change display input source
+alt + cmd - f1 : m1ddc set input 27 # ddcctl -d 1 -i 27
+alt + cmd - f2 : m1ddc set input 15 # ddcctl -d 1 -i 15
+alt + cmd - f3 : m1ddc set input 17 # ddcctl -d 1 -i 17
+
+# control volume
+alt + cmd - f13 : osascript -e "set volume with output muted"
+alt + cmd - f14 : osascript -e "set volume output volume (output volume of (get volume settings) - 5) --100%"
+alt + cmd - f15 : osascript -e "set volume output volume (output volume of (get volume settings) + 5) --100%"
+
+# open applications
+shift + cmd - e    : open -a "Finder"
+shift + cmd - s    : open -a "Settings"
+shift + cmd - 0x35 : open -a "Activity Monitor"

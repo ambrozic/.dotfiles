@@ -1,0 +1,173 @@
+#!/usr/bin/env zsh
+
+CS="\033[1;30m"
+CR="\033[1;31m"
+CG="\033[1;32m"
+CB="\033[1;34m"
+CP="\033[1;35m"
+CC="\033[1;36m"
+CD="\033[0m"
+HOMEBREW_ROOT="/usr/local"
+if [ $(arch) = arm64 ]; then
+  HOMEBREW_ROOT="/opt/homebrew"
+fi
+
+BINARIES=(
+  atuin
+  bash
+  colima
+  diff-so-fancy
+  docker
+  dust
+  duti
+  git
+  htop
+  httpie
+  jq
+  koekeishiya/formulae/skhd
+  koekeishiya/formulae/yabai
+  libpq
+  m1ddc
+  nano
+  openjdk
+  pyenv
+  pyenv-virtualenv
+  rename
+  svn
+  tldr
+  tree
+  watch
+  yq
+  zlib
+  zsh
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+APPLICATIONS=(
+  alt-tab
+  betterdisplay
+  bitwarden
+  clion
+  datagrip
+  dropbox
+  figma
+  firefox
+  fleet
+  font-source-code-pro
+  github
+  google-chrome
+  google-drive
+  iina
+  intellij-idea
+  iterm2
+  krita
+  pycharm
+  rustrover
+  skype
+  stats
+  sublime-text
+  transmission
+  xquartz
+)
+
+PYTHONS=(
+  3.11.8
+  3.12.2
+)
+
+
+function help () {
+  print ""
+  print "Usage: osm COMMAND [OPTIONS]"
+  print ""
+  print "OSM is a tool for managing OS binaries and applications"
+  print ""
+  print "Common Commands:"
+  print "  install  Install dependencies"
+  print "  update   Install or update binaries and applications"
+  print ""
+  exit 0
+}
+
+function install () {
+  print "${CP}Started on $(date "+%F %T")${CD}"
+
+  print ""
+  print "${CB}» Installing xcode${CD}"
+  if [ ! $(command -v xcode-select) ]; then
+    xcode-select --install || true
+  fi
+
+  print ""
+  print "${CB}» Installing brew${CD}"
+  if [ ! $(command -v brew) ]; then
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh > /tmp/brew.installer && /bin/bash /tmp/brew.installer || true
+  fi
+
+  print ""
+  print "${CP}Finished on $(date "+%F %T")${CD}"
+  exit 0
+}
+
+function update () { 
+  print "${CP}Started on $(date "+%F %T")${CD}"
+
+  print ""
+  print "${CB}» Updating brew${CD}"
+  brew update
+  brew upgrade
+
+  print ""
+  print "${CB}» Updating binaries${CD}"
+  for binary in ${BINARIES[@]}; do
+    brew install $binary
+  done
+
+  print ""
+  print "${CB}» Updating applications${CD}"
+  for application in ${APPLICATIONS[@]}; do
+    location="${HOMEBREW_ROOT}/Caskroom/"${application}"/.metadata/"
+    if [ ! -d ${location} ]; then
+      print "${application} is missing, installing"
+      brew install --cask ${application}
+      continue
+    fi
+    current=$(ls -t ${location} | grep -v "config.json" | head -n 1)
+    newest=$(brew info --cask ${application} | head -n 1 | cut -d " " -f 3)
+    if [ ${current} != ${newest} ]; then
+      read "action?${application} out of date. Update ${current} > ${newest}? [Y|n]: "
+      if [ ${action:-Y} = "Y" ]; then
+        brew uninstall --cask ${application} --force
+        brew install --cask ${application}
+      fi
+      continue
+    fi
+    print "${application} is up to date"
+  done
+
+  print ""
+  print "${CB}» Installing python${CD}"
+  for python in ${PYTHONS[@]}; do
+    print "  ${CC}${python}${CD}"
+    pyenv install ${python} --skip-existing
+  done
+
+  print ""
+  print "${CB}» Cleanup brew${CD}"
+  brew cleanup -s
+  brew autoremove
+  brew doctor || true
+
+  print ""
+  print "${CP}Finished on $(date "+%F %T")${CD}"
+  exit 0
+}
+
+
+if [[ $1 =~ ^(help|install|update)$ ]]; then
+  "$@"
+  exit 1
+fi
+
+help

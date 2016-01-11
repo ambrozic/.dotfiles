@@ -1,0 +1,7 @@
+!.gitignore
+.DS_Store
+.fleet
+.idea
+.local
+.python-version
+docker-compose-local.y*ml

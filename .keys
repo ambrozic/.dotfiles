@@ -1,0 +1,9 @@
+/*
+MacOS Key Bindings
+- https://gist.github.com/trusktr/1e5e516df4e8032cbc3d
+- https://ss64.com/mac/syntax-keybindings.html
+*/
+{
+  "^@\UF702" = "noop:";  // Control+Command+LeftArrow
+  "^@\UF703" = "noop:";  // Control+Command+RightArrow
+}

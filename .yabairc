@@ -1,0 +1,26 @@
+# https://github.com/koekeishiya/yabai/wiki
+#
+# yabai --install-service | --uninstall-service | --start-service | --restart-service | --stop-service
+#
+
+# configuration
+yabai -m config                             \
+    layout                       float      \
+    auto_balance                 on         \
+    top_padding                  5          \
+    bottom_padding               5          \
+    right_padding                5          \
+    left_padding                 5          \
+    window_gap                   5          \
+    insert_feedback_color        0xffff0000 \
+    focus_follows_mouse          off        \
+    mouse_follows_focus          off        \
+    mouse_modifier               ctrl
+
+# spaces
+yabai -m space 1 --label main
+yabai -m space 2 --label noise
+
+# applications
+yabai -m rule --add label=managed manage=off app!="^(DataGrip|IntelliJ IDEA|iTerm2|PyCharm|Sublime Text)$" title!="^(DevTools.*)$"
+yabai -m rule --add label=ignored manage=off app="^(DataGrip|IntelliJ IDEA|PyCharm|Sublime Text)$" title!="(.*\[(.*)\].*)|(.*\(\:.*\).*)" title="(.*\.sublime-settings|Copy|Export Data|Plugin Updates|Preferences|Rename|Settings)"
