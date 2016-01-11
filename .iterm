@@ -1,0 +1,4 @@
+############################################
+# SETTINGS LOCATION
+############################################
+defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$HOME/.config/iterm2"

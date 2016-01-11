@@ -1,0 +1,60 @@
+# pdb++, a drop-in replacement for pdb
+import pdb
+
+from pygments.style import Style
+from pygments.token import Keyword, Name, Comment, String, Error, Text, Number, Operator, Punctuation, Literal
+
+# See http://pygments.org/docs/styles/#style-rules
+BLUE = "bold #81a2be"
+BLUE_LIGHT = "#0080ff"
+CLASS = "#9fd72f"
+FOREGROUND = "#ffffff"
+GRAY = "#6d6c72"
+GREEN = "#a6e22e"
+MAGENTA = "#66d9ef"
+ORANGE = "#fd971f"
+PINK = "#ff00cc"
+PINK_DARK = "#904594"
+RED = "#ff0000"
+VIOLET = "#ae81ff"
+YELLOW = "#e6db74"
+
+
+class style(Style):
+    default_style = "monokai"
+    styles = {
+        Text: FOREGROUND,
+        Error: RED,
+        Comment: GRAY,
+        Keyword: MAGENTA,
+        Keyword.Namespace: MAGENTA,
+        Keyword.Type: MAGENTA,
+        Operator: BLUE_LIGHT,
+        Punctuation: PINK,
+        Name: FOREGROUND,
+        Name.Attribute: VIOLET,
+        Name.Class: CLASS,
+        Name.Constant: ORANGE,
+        Name.Decorator: PINK_DARK,
+        Name.Exception: BLUE,
+        Name.Function: GREEN,
+        Name.Namespace: VIOLET,
+        Name.Other: BLUE,
+        Name.Tag: BLUE,
+        Name.Variable: VIOLET,
+        Number: BLUE_LIGHT,
+        Literal: ORANGE,
+        String: YELLOW,
+        String.Doc: GRAY,
+        String.Escape: ORANGE,
+        String.Interpol: VIOLET,
+    }
+
+
+class Config(pdb.DefaultConfig):
+    prompt = "> "
+    highlight = True
+    sticky_by_default = True
+    use_pygments = True
+    pygments_formatter_class = "pygments.formatters.TerminalTrueColorFormatter"
+    pygments_formatter_kwargs = {"style": style}

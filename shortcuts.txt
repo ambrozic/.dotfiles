@@ -1,0 +1,67 @@
+
+             alt + cmd - k              Show these shortcuts
+
+             alt + cmd - Comma          Resize window to full size
+             alt + cmd - Dot            Resize window to center medium size
+             alt + cmd - /              Resize window to center small size
+      ctrl + alt + cmd - Dot            Resize window to center mini size
+      ctrl + alt + cmd - /              Resize window to center nano size
+             alt + cmd - m              Resize window to center narrow full height
+
+             alt + cmd - Minus          Decrease window size vertically
+      ctrl + alt + cmd - Minus          Decrease window size horizontally
+             alt + cmd - Equals         Increase window size vertically
+      ctrl + alt + cmd - Equals         Increase window size horizontally
+
+             alt + cmd - F5             Resize window to top left corner
+             alt + cmd - F6             Resize window to top right corner
+             alt + cmd - F7             Resize window to bottom left corner
+             alt + cmd - F8             Resize window to bottom right corner
+            
+             alt + cmd - F9             Resize window to top half
+             alt + cmd - F10            Resize window to bottom half
+             alt + cmd - F11            Resize window to left half
+             alt + cmd - F12            Resize window to right half
+
+             alt + cmd - insert         Resize window vertically to left third
+             alt + cmd - home           Resize window vertically to center third
+             alt + cmd - pageup         Resize window vertically to right third
+
+             alt + cmd - delete         Resize window horizontally to top third
+             alt + cmd - end            Resize window horizontally to center third
+             alt + cmd - pagedown       Resize window horizontally to bottom third
+
+             alt + cmd - Backspace      Toggle active window in and out of tiling layout
+             alt + cmd - 0              Enable window tiling on main space
+      ctrl + alt + cmd - 0              Disable window tiling on main space
+             alt + cmd - 9              Toggle window split between vertical or horizontal
+             alt + cmd - 8              Balance windows layout state
+             alt + cmd - 7              Rotate windows layout state
+             alt + cmd - 6              Mirror windows layout state vertically
+             alt + cmd - 5              Mirror windows layout state horizontally
+             
+             alt + cmd - 4              Swap window east
+             alt + cmd - 3              Swap window south
+             alt + cmd - 2              Swap window north
+             alt + cmd - 1              Swap window west
+            
+             alt + cmd - Semicolon      Resize and center all windows
+             alt + cmd - Quote          Group windows
+             alt + cmd - Backslash      Scatter windows randomly
+
+             alt + cmd - [              Move window to previous space
+             alt + cmd - ]              Move window to next space
+      ctrl + alt + cmd - [              Move window to previous display
+      ctrl + alt + cmd - ]              Move window to next display
+            
+             alt + cmd - F13            Mute volume
+             alt + cmd - F14            Decrease volume
+             alt + cmd - F15            Increase volume
+            
+           shift + cmd - e              Open Finder
+           shift + cmd - s              Open System Preferences
+           shift + cmd - Esc            Open Activity Monitor
+
+             alt + cmd - F1-F3          Switch input for display 1-3
+           shift + cmd - .              Toggle hidden files
+            ctrl + alt - k              Toggle keyboard input sources
