@@ -1,0 +1,34 @@
+############################################
+# NANO
+############################################
+set constantshow
+set smooth
+set autoindent
+set mouse
+set nowrap
+
+# syntax coloring
+
+include /usr/local/share/nano/awk.nanorc
+include /usr/local/share/nano/c.nanorc
+include /usr/local/share/nano/changelog.nanorc
+include /usr/local/share/nano/css.nanorc
+include /usr/local/share/nano/default.nanorc
+include /usr/local/share/nano/go.nanorc
+include /usr/local/share/nano/html.nanorc
+include /usr/local/share/nano/java.nanorc
+include /usr/local/share/nano/javascript.nanorc
+include /usr/local/share/nano/json.nanorc
+include /usr/local/share/nano/lua.nanorc
+include /usr/local/share/nano/makefile.nanorc
+include /usr/local/share/nano/man.nanorc
+include /usr/local/share/nano/nanorc.nanorc
+include /usr/local/share/nano/patch.nanorc
+include /usr/local/share/nano/perl.nanorc
+include /usr/local/share/nano/postgresql.nanorc
+include /usr/local/share/nano/python.nanorc
+include /usr/local/share/nano/ruby.nanorc
+include /usr/local/share/nano/rust.nanorc
+include /usr/local/share/nano/sh.nanorc
+include /usr/local/share/nano/texinfo.nanorc
+include /usr/local/share/nano/xml.nanorc

@@ -1,0 +1,300 @@
+-- VARIABLES
+local ALERT = require("hs.alert")
+local APPLICATION = require("hs.application")
+local AUDIODEVICE = require("hs.audiodevice")
+local CANVAS = require("hs.canvas")
+local GRID = require("hs.grid")
+local KEYS = require("hs.hotkey")
+local LAYOUT = require("hs.layout")
+local MODIFIER = {"cmd", "alt"}
+local SCREEN_MAIN = hs.screen.mainScreen()
+local SCREEN_NAME_EXTERNAL = nil
+local SCREEN_NAME_INTERNAL = "Color LCD"
+local STYLE_ALERT = {radius=15, strokeColor={white=0.7, alpha=1}, fillColor={white=0.7, alpha=1}, textColor={white=0.1, alpha=1}, textFont="Monaco", textSize=80}
+local TIMER = require("hs.timer")
+local WINDOW = require("hs.window")
+local WINDOWFILTER = require("hs.window.filter")
+
+local DIR = nil
+local VOLUME_BOX = nil
+local VOLUME_TIMER = nil
+local APPLICATIONS = {
+	primary = {
+		{"iTerm2",			nil, SCREEN_MAIN, {x=0.002, y=0.4, w=1.0 - 0.003, h=0.6}, nil, nil},
+		{"IntelliJ IDEA",	nil, SCREEN_MAIN, {x=0.002, y=0.0, w=1.0 - 0.004, h=0.8}, nil, nil},
+		{"PyCharm",			nil, SCREEN_MAIN, {x=0.002, y=0.0, w=1.0 - 0.004, h=0.8}, nil, nil},
+	},
+	secondary = {
+		{"GitHub Desktop",	nil, SCREEN_MAIN, {x=0.10, y=0.10, w=0.8, h=0.7}, nil, nil},
+		{"Google Chrome",   nil, SCREEN_MAIN, {x=0.12, y=0.12, w=0.8, h=0.7}, nil, nil},
+		{"Sublime Text",	nil, SCREEN_MAIN, {x=0.14, y=0.14, w=0.8, h=0.7}, nil, nil},
+	},
+	peripheral = {
+		{"Skype",			nil, SCREEN_MAIN, {x=0.02, y=0.02, w=0.6, h=0.6}, nil, nil},
+		{"Slack",			nil, SCREEN_MAIN, {x=0.06, y=0.06, w=0.6, h=0.6}, nil, nil},
+	}
+}
+
+-- SETTINGS
+GRID.setGrid("12x12")
+
+-- DISABLE ANIMATIONS
+WINDOW.animationDuration = 0
+
+-- FUNCTIONS
+function round(n)
+    return n % 1 >= 0.5 and math.ceil(n) or math.floor(n)
+end
+
+function reloadConfig(files)
+	local doReload = false
+	for _,file in pairs(files) do
+		if file:sub(-4) == ".lua" then
+			doReload = true
+		end
+	end
+	if doReload then
+		hs.reload()
+		ALERT.show("Reloaded")
+	end
+end
+
+function positionPrimaryWindows()
+	ALERT.show("Primary")
+	LAYOUT.apply(APPLICATIONS.primary)
+	for _, w in pairs(APPLICATIONS.primary) do
+		app = APPLICATION.find(w[1])
+		if app ~= nil then
+			app:activate()
+		end
+	end
+end
+
+function positionSecondaryWindows()
+	ALERT.show("Secondary")
+	LAYOUT.apply(APPLICATIONS.secondary)
+	for _, w in pairs(APPLICATIONS.secondary) do
+		app = APPLICATION.find(w[1])
+		if app ~= nil then
+			app:activate()
+		end
+	end
+end
+
+function positionPeripheralWindows()
+	ALERT.show("Peripheral")
+	LAYOUT.apply(APPLICATIONS.peripheral)
+end
+
+function cascadeWindows()
+	ALERT.show("Cascaded")
+	local filter = WINDOWFILTER.new():setOverrideFilter{currentSpace=true}
+	for i, win in pairs(filter:getWindows()) do
+		win:moveToUnit({0.02 + i * 0.01, 0.02 + i * 0.02, 0.8, 0.8})
+	end
+end
+
+function showDesktop()
+    ALERT.show("Desktop")
+	local filter = WINDOWFILTER.new():setOverrideFilter{visible=true, currentSpace=true}
+	local visible = filter:getWindows()
+	for i, win in pairs(WINDOW.allWindows()) do
+		if #visible > 0 then
+			win:application():hide()
+		else
+			win:application():unhide()
+		end
+	end
+end
+
+function tileWindows()
+	ALERT.show("Tiled")
+	local filter = WINDOWFILTER.new():setOverrideFilter{currentSpace=true}
+	local windows = filter:getWindows()
+	local columns = math.ceil(math.sqrt(#windows))
+	local rows = math.ceil(#windows / columns)
+	for i, win in pairs(windows) do
+		local column = (i - 1) % columns
+		local row = math.ceil(i / math.ceil(#windows / rows) - 1)
+		win:moveToUnit({1 / columns * column, 1 / rows * row, 1 / columns, 1 / rows})
+	end
+end
+
+function positionFullScreen()
+	local win = WINDOW.focusedWindow()
+	local frame = win:screen():frame()
+	win:setFrame({5, 29, frame.w - 10, frame.h - 10})
+end
+
+function positionCenterFullHeightScreen()
+	local win = WINDOW.focusedWindow()
+	local frame = win:screen():frame()
+	win:setFrame({195, 10, frame.w - 390, frame.h - 10})
+end
+
+function positionCenterScreen()
+	local win = WINDOW.focusedWindow()
+	local frame = win:screen():frame()
+	win:setFrame({195, 140, frame.w - 390, frame.h - 240})
+end
+
+function positionCenterSizedScreen()
+	local win = WINDOW.focusedWindow()
+	local frame = win:screen():frame()
+	win:setFrame({frame.w / 2 - 1600 / 2, 200, 1600, frame.h - 300})
+end
+
+function positionTopLeft()
+	local win = WINDOW.focusedWindow()
+	GRID.set(win, {0, 0, 6, 6}, win:screen())
+end
+
+function positionTopRight()
+	local win = WINDOW.focusedWindow()
+	GRID.set(win, {6, 0, 6, 6}, win:screen())
+end
+
+function positionBottomLeft()
+	local win = WINDOW.focusedWindow()
+	GRID.set(win, {0, 6, 6, 6}, win:screen())
+end
+
+function positionBottomRight()
+	local win = WINDOW.focusedWindow()
+	GRID.set(win, {6, 6, 6, 6}, win:screen())
+end
+
+function positionTopHalf()
+	local win = WINDOW.focusedWindow()
+	GRID.set(win, {0, 0, 12, 6}, win:screen())
+end
+
+function positionBottomHalf()
+	local win = WINDOW.focusedWindow()
+	GRID.set(win, {0, 6, 12, 6}, win:screen())
+end
+
+function positionLeftHalf()
+	local win = WINDOW.focusedWindow()
+	GRID.set(win, {0, 0, 6, 12}, win:screen())
+end
+
+function positionRightHalf()
+	local win = WINDOW.focusedWindow()
+	GRID.set(win, {6, 0, 6, 12}, win:screen())
+end
+
+function resizeUp()
+	local win = WINDOW.focusedWindow()
+	local screen = win:screen()
+	local i = DIR ~= "UP" and 6 or math.max(0, GRID.get(win, screen).h - 1)
+	GRID.set(win, {0, 0, 12, i}, screen)
+	DIR = "UP"
+end
+
+function resizeDown()
+	local win = WINDOW.focusedWindow()
+	local screen = win:screen()
+	local i = DIR ~= "DOWN" and 6 or math.min(9, GRID.get(win, screen).y + 1)
+	GRID.set(win, {0, i, 12, 12 - i}, screen)
+	DIR = "DOWN"
+end
+
+function resizeLeft()
+	local win = WINDOW.focusedWindow()
+	local screen = win:screen()
+	local i = DIR ~= "LEFT" and 6 or math.max(0, GRID.get(win, screen).w - 1)
+	GRID.set(win, {0, 0, i, 12}, screen)
+	DIR = "LEFT"
+end
+
+function resizeRight()
+	local win = WINDOW.focusedWindow()
+	local screen = win:screen()
+	local i = DIR ~= "RIGHT" and 6 or math.max(3, GRID.get(win, screen).w - 1)
+	GRID.set(win, {12 - i, 0, i, 12}, screen)
+	DIR = "RIGHT"
+end
+
+function volumeUp()
+	ALERT.closeAll(0)
+	AUDIODEVICE.defaultOutputDevice():setMuted(false)
+	AUDIODEVICE.defaultOutputDevice():setVolume(round(math.max(0, AUDIODEVICE.current().volume + 5)))
+	drawVolume()
+end
+
+function volumeDown()
+	ALERT.closeAll(0)
+	AUDIODEVICE.defaultOutputDevice():setMuted(false)
+	AUDIODEVICE.defaultOutputDevice():setVolume(round(math.max(0, AUDIODEVICE.current().volume - 5)))
+	drawVolume()
+end
+
+function volumeMute()
+	ALERT.closeAll(0)
+	AUDIODEVICE.defaultOutputDevice():setMuted(not AUDIODEVICE.defaultOutputDevice():muted())
+	ALERT.show(hs.audiodevice.defaultOutputDevice():muted() and "🔇"  or "🔊", STYLE_ALERT)
+end
+
+function drawVolume()
+	local BM = 4
+	local BP = 8
+	local BH = 60
+	local BW = 16
+	local BWI = BW - BM
+
+	if VOLUME_BOX == nil then
+		local CW = BW * 20 + BP * 2
+		VOLUME_BOX = CANVAS.new({
+			x=WINDOW.focusedWindow():screen():frame().w / 2 - CW / 2 + BM / 2,
+			y=WINDOW.focusedWindow():screen():frame().h / 2 - BH / 2,
+			h=BH + BP * 2 + 50,
+			w=CW + 50
+		})
+	end
+	if VOLUME_TIMER == nil then
+		 VOLUME_TIMER = TIMER.new(2, function () VOLUME_BOX:hide(1) end)
+	end
+
+    VOLUME_BOX:replaceElements({action="fill", fillColor={ alpha=1.0, white=0.7}, frame={x=0, y=0, h=BH + BP * 2, w=20 * BW + BP * 2 - BM}, type="rectangle", roundedRectRadii={xRadius=BP / 2, yRadius=BP / 2}, withShadow=true})
+	for i=0, 19 do
+   		if i < round(AUDIODEVICE.current().volume / 5) then
+   			VOLUME_BOX:appendElements({action="fill", fillColor={ alpha=1.0, white=1.0}, frame={x=BP + i * BW, y=BP, h=BH, w=BWI}, type="rectangle"})
+   		else
+   			VOLUME_BOX:appendElements({action="fill", fillColor={ alpha=0.4, black=1.0}, frame={x=BP + i * BW, y=BP, h=BH, w=BWI}, type="rectangle"})
+   		end
+	end
+	VOLUME_BOX:show()
+	VOLUME_TIMER:stop():start()
+end
+
+-- WATCHERS
+hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
+
+-- BINDS
+KEYS.bind(MODIFIER, "1", cascadeWindows)
+KEYS.bind(MODIFIER, "2", tileWindows)
+KEYS.bind(MODIFIER, "3", positionPrimaryWindows)
+KEYS.bind(MODIFIER, "4", positionSecondaryWindows)
+KEYS.bind(MODIFIER, "5", positionPeripheralWindows)
+KEYS.bind(MODIFIER, "M", positionFullScreen)
+KEYS.bind(MODIFIER, ",", positionCenterFullHeightScreen)
+KEYS.bind(MODIFIER, ".", positionCenterScreen)
+KEYS.bind(MODIFIER, "/", positionCenterSizedScreen)
+-- KEYS.bind(MODIFIER, "UP", resizeUp)
+-- KEYS.bind(MODIFIER, "DOWN", resizeDown)
+-- KEYS.bind(MODIFIER, "LEFT", resizeLeft)
+-- KEYS.bind(MODIFIER, "RIGHT", resizeRight)
+KEYS.bind(MODIFIER, "F5", positionTopLeft)
+KEYS.bind(MODIFIER, "F6", positionTopRight)
+KEYS.bind(MODIFIER, "F7", positionBottomLeft)
+KEYS.bind(MODIFIER, "F8", positionBottomRight)
+KEYS.bind(MODIFIER, "F9", positionLeftHalf)
+KEYS.bind(MODIFIER, "F10", positionRightHalf)
+KEYS.bind(MODIFIER, "F11", positionTopHalf)
+KEYS.bind(MODIFIER, "F12", positionBottomHalf)
+-- KEYS.bind({"cmd"}, "r", hs.reload)
+KEYS.bind({"ctrl"}, "F13", volumeMute)
+KEYS.bind({"ctrl"}, "F14", volumeDown)
+KEYS.bind({"ctrl"}, "F15", volumeUp)
+KEYS.bind({"ctrl", "shift"}, "escape", function () APPLICATION.open("Activity Monitor") end)
